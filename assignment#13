@@ -1,0 +1,41 @@
+import re
+
+def cleanhtml(raw_html):
+  cleanr = re.compile('<.*?>')
+  cleantext = re.sub(cleanr, '', raw_html)
+  return cleantext
+
+import requests
+r=requests.get('https://www.vox.com/2018/9/25/17901082/trump-un-2018-speech-full-text')
+r.encoding='utf8'
+olddata=str(r.text)
+data=olddata.replace("<p","")
+begin= data.find("President Donald Trump</a>’s ")
+end= data.rfind("(Applause.)")
+d=data[begin:end+1]
+data=cleanhtml(d)
+data.replace(".","")
+data.replace(",","")
+data.replace("!","")
+data.replace("?","")
+data.replace(")","")
+data.replace("(","")
+data.replace("<p","")
+data=d.split()
+
+mydict={}
+words= data
+
+for w in words:
+    if w in mydict:
+        mydict[w]+=1
+    else:
+        mydict[w]=1
+        
+result= list()
+for key,val in mydict.items():
+    result.append((val,key))
+result.sort(reverse=True)
+
+for val,key in result[:20]:
+    print(key,"(",val,"times)")
